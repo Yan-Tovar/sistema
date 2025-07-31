@@ -1,3 +1,12 @@
+@extends('layouts.app')
+@section('content')
+<div class="container">
+
+@if(Session::has('mensaje'))
+    <div class="alert alert-success alert-dismissible" role="alert">
+        {{Session::get('mensaje')}}
+    </div>
+@endif
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +15,7 @@
     <title>Empleados</title>
 </head>
 <body>
+    <a href="{{url('/empleados/create')}}" class="btn btn-success">Registrar Nuevo Empleado</a>
     <table class="table table-light">
         <thead class="thead-light">
             <tr>
@@ -22,7 +32,7 @@
             @foreach ($empleados as $datos )
             <tr>
                 <td>{{$datos->id}}</td>
-                <td>{{$datos->Foto}}</td>
+                <td><img src="{{asset('storage').'/'.$datos->Foto}}" alt=""></td>
                 <td>{{$datos->Nombre}}</td>
                 <td>{{$datos->PrimerApel}}</td>
                 <td>{{$datos->SegundoApel}}</td>
@@ -39,5 +49,8 @@
             @endforeach
         </tbody>
     </table>
+    {!! $empleados->Links() !!}
 </body>
 </html>
+</div>
+@endsection
