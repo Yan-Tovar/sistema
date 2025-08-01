@@ -1,12 +1,3 @@
-@extends('layouts.app')
-@section('content')
-<div class="container">
-
-@if(Session::has('mensaje'))
-    <div class="alert alert-success alert-dismissible" role="alert">
-        {{Session::get('mensaje')}}
-    </div>
-@endif
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +6,17 @@
     <title>Empleados</title>
 </head>
 <body>
-    <a href="{{url('/empleados/create')}}" class="btn btn-success">Registrar Nuevo Empleado</a>
+    @extends('layouts.app')
+    @section('content')
+    <div class="container">
+
+    @if(Session::has('mensaje'))
+        <div class="alert alert-success alert-dismissible" role="alert">
+            {{Session::get('mensaje')}}
+        </div>
+    @endif
+    <h4>LISTA LOS DATOS DE LOS EMPLEADOS</h4>
+    <a href="{{('/empleados/create')}}" class="btn btn-primary">Registrar Nuevo Empleado</a>
     <table class="table table-light">
         <thead class="thead-light">
             <tr>
@@ -32,17 +33,18 @@
             @foreach ($empleados as $datos )
             <tr>
                 <td>{{$datos->id}}</td>
-                <td><img src="{{asset('storage').'/'.$datos->Foto}}" alt=""></td>
-                <td>{{$datos->Nombre}}</td>
+                <td><img src="{{asset('storage').'/'.$datos->Foto}}" alt="" width="300px"></td>
+                <td>{{$datos->Nombres}}</td>
                 <td>{{$datos->PrimerApel}}</td>
                 <td>{{$datos->SegundoApel}}</td>
-                <td>{{$datos->Email}}</td>
+                <td>{{$datos->Correo}}</td>
                 <td>
-                    <a href="{{url('/empleados/'.$datos->id.'/edit')}}">Editar</a>
+                    <a href="{{url('/empleados/'.$datos->id.'/edit')}}" class="btn btn-warning">Editar</a>
+
                     <form action="{{url('/empleados/'.$datos->id)}}" method="POST">
-                        @scrf
+                        @csrf
                         {{method_field('DELETE')}}
-                        <input type="submit" onclick="return confirm('¿Deseas Eliminar?')" value="Eliminar">
+                        <input type="submit" onclick="return confirm('¿Deseas Eliminar?')" class="btn btn-danger" value="Eliminar">
                     </form>
                 </td>
             </tr>
@@ -50,7 +52,7 @@
         </tbody>
     </table>
     {!! $empleados->Links() !!}
+    </div>
+    @endsection
 </body>
 </html>
-</div>
-@endsection

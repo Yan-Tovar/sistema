@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\empleado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use function PHPUnit\Framework\returnArgument;
 
 class EmpleadoController extends Controller
 {
@@ -13,7 +14,7 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $listado['empleados'] =  empleado::paginate(5);
+        $listado['empleados'] =  empleado::paginate(2);
         return view('empleados.index', $listado);
     }
 
@@ -35,9 +36,10 @@ class EmpleadoController extends Controller
             'PrimerApel'=>'required|string|max:255',
             'SegundoApel'=>'required|string|max:255',
             'Correo'=>'required|string|max:255',
-            'Foto'=>'required'];
-            $msj =['required'=>'El :attribute es requerido',
-            'Foto.required'=>'La Foto es requerida'
+            'Foto'=>'required',
+        ];
+        $msj =['required'=>'El :attribute es requerido',
+        'Foto.required'=>'La Foto es requerida',
         ];
         $this->validate($request, $validacion, $msj);
         
@@ -76,20 +78,24 @@ class EmpleadoController extends Controller
         //
         $validacion = [
             'Nombres'=>'required|string|max:255',
+            'PrimerApel'=>'required|string|max:255',
+            'SegundoApel'=>'required|string|max:255',
+            'Correo'=>'required|string|max:255',
+            'Foto'=>'required',
         ];
         $msj=['required'=>'El :attribute es requerido'];
         if($request->hasFile('Foto')){
-            $validacion = ['Foto'=>'Required|max:10000|mimes:jpg,png,jpeg'];
+            $validacion = ['Foto'=>'required|max:10000|mimes:jpg,png,jpeg'];
             $msj=['Foto.required'=>'La Foto es requerida'];
         }
         $this-> validate($request, $validacion, $msj);
         $datos = request()->except(['_token', '_method']);
         if($request->hasFile('Foto')){
-            $datos['Foto']=$request->file('Foto')->store('uploads','public');
+            $datos['Foto']= request()->file('Foto')->store('uploads','public');
         }
         empleado::where('id', '=', $id)->update($datos);
         $empleado = empleado::findOrFail($id);
-        return redirect('empleados')->with('mensaje', 'Registro eliminado exitosamente');
+        return view('empleados.update', compact('empleado'));
     }
 
     /**
@@ -98,7 +104,7 @@ class EmpleadoController extends Controller
     public function destroy($id)
     {   
         $empleado = empleado::findOrFail($id);
-        if(Storage::delete('public/'.$empleado->Foto)){
+        if(storage::delete('public/'.$empleado->Foto)){
             empleado::destroy($id);
         }
         return redirect('empleados')->with('mensaje', 'Registro eliminado exitosamente');
